@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Studio — Infinity Sparkle Studios</title>
+<meta name="theme-color" content="#241D14">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14100D; --ink-line:#3a3025; --gold:#C9962E; --gold-light:#E7C878; --gold-dim:#8a6d2f;
+    --cream:#F1EAD9; --cream-deep:#E4D9C0; --cream-line:#d6c9a8; --paper:#fffdf8; --charcoal:#241D14;
+    --muted:#6b6047; --ok:#4c7a52; --warn:#9a5b12; --bad:#8a2f2f; --sapphire:#3B4A85;
+    --serif:'Cormorant Garamond', serif; --sans:'Jost', sans-serif; --radius:3px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--sans);background:var(--cream);color:var(--charcoal);-webkit-font-smoothing:antialiased;font-size:14px}
+  button{font-family:inherit;cursor:pointer}
+  input,select,textarea{font-family:inherit;font-size:13.5px;color:var(--charcoal)}
+  .num{font-variant-numeric:tabular-nums}
+
+  /* top bar */
+  header{background:var(--ink);color:var(--cream);position:sticky;top:0;z-index:20}
+  .bar{max-width:1320px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+  .wordmark{font-family:var(--serif);font-style:italic;font-size:22px;display:flex;align-items:center;gap:10px}
+  .wordmark .mark{width:8px;height:8px;background:var(--gold);transform:rotate(45deg)}
+  .wordmark small{font-family:var(--sans);font-style:normal;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-light)}
+  nav{display:flex;gap:4px;flex-wrap:wrap}
+  nav button{background:none;border:1px solid transparent;color:#cfc4ad;padding:8px 14px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;border-radius:var(--radius)}
+  nav button.active{border-color:var(--gold-dim);color:var(--gold-light)}
+  nav button:hover{color:var(--cream)}
+  .bar .spacer{flex:1}
+  .bar a{color:#a89a7c;font-size:12px;letter-spacing:.06em;text-decoration:none}
+  .bar a:hover{color:var(--gold-light)}
+  .save-state{font-size:11.5px;color:#a89a7c}
+
+  main{max-width:1320px;margin:0 auto;padding:24px 20px 80px}
+  h1,h2,h3{font-family:var(--serif);font-weight:600;margin:0}
+  h2{font-size:28px}
+  .eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);font-weight:500}
+  .lead{color:var(--muted);font-weight:300;margin:6px 0 20px;max-width:720px;line-height:1.55}
+
+  .btn{background:var(--charcoal);color:var(--cream);border:none;padding:9px 14px;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:500;border-radius:var(--radius)}
+  .btn:hover{background:#000}
+  .btn.gold{background:linear-gradient(180deg,var(--gold-light),var(--gold));color:var(--ink);font-weight:600}
+  .btn.ghost{background:none;border:1px solid var(--charcoal);color:var(--charcoal)}
+  .btn.ghost:hover{background:var(--charcoal);color:var(--cream)}
+  .btn.small{padding:6px 10px;font-size:10.5px}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .icon-btn{background:none;border:none;color:#a0937a;font-size:16px;line-height:1;padding:4px 6px}
+  .icon-btn:hover{color:var(--bad)}
+
+  .card{background:var(--paper);border:1px solid var(--cream-line);border-radius:var(--radius)}
+  .field label{display:block;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;font-weight:500}
+  .field input,.field select,.field textarea{width:100%;border:1px solid var(--cream-line);background:#fff;padding:8px 10px;border-radius:var(--radius)}
+  .field textarea{min-height:60px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--gold-dim);outline-offset:0}
+
+  /* jobs layout */
+  .jobs-layout{display:grid;grid-template-columns:260px minmax(0,1fr) 320px;gap:18px;align-items:start}
+  .job-list{position:sticky;top:78px}
+  .job-list .head{display:flex;justify-content:space-between;align-items:center;padding:14px 14px 10px}
+  .job-item{padding:12px 14px;border-top:1px solid var(--cream-line);cursor:pointer}
+  .job-item:hover{background:#faf5e8}
+  .job-item.active{background:var(--cream-deep)}
+  .job-item h4{margin:0 0 4px;font-family:var(--serif);font-size:16.5px;font-weight:600}
+  .job-item .meta{font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+  .dots{display:flex;gap:3px;margin-top:7px}
+  .dots span{height:4px;flex:1;background:var(--cream-line);border-radius:2px}
+  .dots span.progress{background:var(--gold)}
+  .dots span.done{background:var(--ok)}
+
+  .job-head{padding:18px 20px;display:grid;grid-template-columns:2fr 1.4fr 1fr 1fr;gap:12px;align-items:end}
+  .job-head .title input{font-family:var(--serif);font-size:22px;font-weight:600;padding:6px 10px}
+
+  .stage{margin-top:14px}
+  .stage-head{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer}
+  .stage-num{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:20px;width:22px}
+  .stage-head h3{font-size:19px;flex:1}
+  .stage-head .hint{font-family:var(--sans);font-size:11.5px;color:var(--muted);font-weight:300;display:block;margin-top:2px}
+  .stage-total{font-weight:600;font-size:15px}
+  .status-sel{border:1px solid var(--cream-line);padding:5px 8px;border-radius:20px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;background:#fff}
+  .status-sel.progress{background:#f4e6c4;border-color:#e0c787}
+  .status-sel.done{background:#dbe9dc;border-color:#b7d0b9}
+  .stage-body{border-top:1px solid var(--cream-line);padding:14px 18px 18px}
+  .stage.collapsed .stage-body{display:none}
+  table.lines{width:100%;border-collapse:collapse;margin-bottom:12px}
+  table.lines th{text-align:left;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:6px 6px;border-bottom:1px solid var(--cream-line)}
+  table.lines td{padding:5px 6px;border-bottom:1px solid #eee5d0;vertical-align:middle}
+  table.lines td input{width:100%;border:1px solid transparent;background:transparent;padding:5px 6px;border-radius:var(--radius)}
+  table.lines td input:hover{border-color:var(--cream-line);background:#fff}
+  table.lines td.r, table.lines th.r{text-align:right}
+  table.lines .kind{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#fff;background:#a0937a;padding:2px 6px;border-radius:10px}
+  .kind.metal{background:var(--gold-dim)!important}.kind.labour{background:var(--sapphire)!important}.kind.material{background:var(--ok)!important}.kind.machine{background:#6b5a8a!important}
+  .empty-lines{color:var(--muted);font-size:12.5px;padding:6px 0 12px;font-weight:300}
+  .quick{background:#faf5e8;border:1px dashed var(--cream-line);border-radius:var(--radius);padding:12px;display:grid;gap:10px}
+  .quick-row{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
+  .quick-row .field{flex:1;min-width:110px}
+  .quick-row .field.wide{flex:2.4;min-width:180px}
+  .quick-row .field.narrow{flex:.6;min-width:74px}
+  .quick h5{margin:0;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-dim);font-weight:600}
+  .preview{font-size:11.5px;color:var(--muted);align-self:center}
+
+  /* summary */
+  .summary{position:sticky;top:78px;background:var(--ink);color:var(--cream);border-radius:var(--radius);padding:20px}
+  .summary h3{font-size:20px;color:var(--gold-light);margin-bottom:4px}
+  .summary .sub{font-size:11.5px;color:#a89a7c;margin-bottom:14px}
+  .srow{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:13px;color:#d9ceb5}
+  .srow.stage-row{font-size:12px;color:#a89a7c;padding:3px 0}
+  .srow.line{border-top:1px solid var(--ink-line);margin-top:6px;padding-top:9px}
+  .srow.big{font-family:var(--serif);font-size:26px;color:var(--gold-light);font-weight:600;align-items:baseline}
+  .srow.big small{font-family:var(--sans);font-size:11px;color:#a89a7c;letter-spacing:.08em;text-transform:uppercase}
+  .srow .shadow-tag{color:var(--gold-light)}
+  .budget{margin-top:10px;font-size:12px;padding:8px 10px;border-radius:var(--radius);background:#241c14;color:#cfc4ad}
+  .budget.over{background:#3a1d1d;color:#f0c0c0}
+  .warn-list{margin-top:10px;font-size:11.5px;color:#f0cf8a;line-height:1.5}
+  .summary .btn{width:100%;margin-top:12px}
+  .history{margin-top:16px;border-top:1px solid var(--ink-line);padding-top:12px;max-height:200px;overflow:auto}
+  .history div{font-size:11px;color:#a89a7c;padding:3px 0;line-height:1.4}
+  .history b{color:#d9ceb5;font-weight:500}
+  .flash{animation:flash 1s ease}
+  @keyframes flash{0%{color:#fff;text-shadow:0 0 12px var(--gold)}100%{}}
+
+  /* tables for requests / price book */
+  table.grid{width:100%;border-collapse:collapse;background:var(--paper)}
+  table.grid th{text-align:left;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:9px 10px;border-bottom:1px solid var(--cream-line);background:#faf5e8}
+  table.grid td{padding:8px 10px;border-bottom:1px solid #eee5d0;vertical-align:middle}
+  table.grid td input,table.grid td select{width:100%;border:1px solid var(--cream-line);background:#fff;padding:6px 8px;border-radius:var(--radius)}
+  table.grid td input.num{text-align:right}
+  .scroll-x{overflow-x:auto}
+  .pb-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .pb-section{padding:18px}
+  .pb-section h3{font-size:20px;margin-bottom:4px}
+  .pb-section p.note{font-size:12px;color:var(--muted);margin:0 0 12px;font-weight:300}
+  .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .pill{display:inline-block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:20px;font-weight:600;background:#eee0c2;color:#7a5b12}
+  .banner{background:#fbefd3;border:1px solid #e6c985;color:#6b4b0f;padding:10px 14px;border-radius:var(--radius);font-size:12.5px;margin-bottom:16px;line-height:1.5}
+
+  /* PIN gate */
+  #gate{position:fixed;inset:0;background:var(--ink);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+  #gate .box{background:var(--cream);padding:30px;max-width:360px;width:100%;border-radius:var(--radius);text-align:center}
+  #gate h2{margin-bottom:6px}
+  #gate p{color:var(--muted);font-size:13px;font-weight:300;margin:0 0 16px}
+  #gate input{width:100%;text-align:center;letter-spacing:.4em;font-size:20px;padding:10px;border:1px solid var(--cream-line);margin-bottom:12px}
+  #gate .err{color:var(--bad);font-size:12px;min-height:16px}
+
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--charcoal);color:var(--cream);padding:12px 20px;font-size:13px;border-radius:var(--radius);opacity:0;pointer-events:none;transition:all .25s ease;z-index:200;box-shadow:0 12px 30px rgba(0,0,0,.3);max-width:92vw}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .hidden{display:none!important}
+
+  @media (max-width:1180px){
+    .jobs-layout{grid-template-columns:230px minmax(0,1fr)}
+    .summary-col{grid-column:1 / -1}
+    .summary{position:static}
+  }
+  @media (max-width:820px){
+    .jobs-layout{grid-template-columns:1fr}
+    .job-list{position:static}
+    .job-head{grid-template-columns:1fr 1fr}
+    .job-head .title{grid-column:1 / -1}
+    .pb-grid{grid-template-columns:1fr}
+    table.lines .hide-sm{display:none}
+    main{padding:16px 16px 60px}
+    .bar{padding:12px 16px}
+  }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="box">
+    <div class="eyebrow" style="margin-bottom:8px">Infinity Sparkle Studios</div>
+    <h2 id="gateTitle">Studio sign-in</h2>
+    <p id="gateText">Enter your studio PIN.</p>
+    <input type="password" id="pinInput" inputmode="numeric" autocomplete="off" maxlength="12">
+    <div class="err" id="pinErr"></div>
+    <button class="btn gold" style="width:100%" onclick="submitPin()">Continue</button>
+  </div>
+</div>
+
+<header>
+  <div class="bar">
+    <div class="wordmark"><span class="mark"></span>Infinity Sparkle <small>Studio</small></div>
+    <nav id="tabs">
+      <button data-tab="jobs" class="active">Jobs &amp; pricing</button>
+      <button data-tab="requests">Design requests</button>
+      <button data-tab="pricebook">Price book</button>
+      <button data-tab="sync">Backup &amp; sync</button>
+    </nav>
+    <span class="spacer"></span>
+    <span class="save-state" id="saveState">Saved</span>
+    <a href="index.html">View website →</a>
+  </div>
+</header>
+
+<main>
+  <!-- JOBS -->
+  <section id="tab-jobs">
+    <div id="metalBanner"></div>
+    <div class="jobs-layout">
+      <div class="card job-list">
+        <div class="head"><span class="eyebrow">Jobs</span><button class="btn small" onclick="createJob()">+ New job</button></div>
+        <div id="jobList"></div>
+      </div>
+      <div id="jobDetail"></div>
+      <div class="summary-col"><div class="summary" id="summary"></div></div>
+    </div>
+  </section>
+
+  <!-- REQUESTS -->
+  <section id="tab-requests" class="hidden">
+    <div class="eyebrow">Design requests</div>
+    <h2>From the website</h2>
+    <p class="lead">Ideas customers send through the “Design With Us” form. Start a job to price a request; once you send the quote, the customer sees the amount in their thread.</p>
+    <div class="card scroll-x"><table class="grid" id="reqTable"></table></div>
+  </section>
+
+  <!-- PRICE BOOK -->
+  <section id="tab-pricebook" class="hidden">
+    <div class="eyebrow">Price book</div>
+    <h2>Rates used for every job</h2>
+    <p class="lead">Changes here apply to new lines you add. Lines already on a job keep the price they had when added — use “Refresh prices” on a job to update it to today's rates.</p>
+    <div class="pb-grid" id="pricebook"></div>
+  </section>
+
+  <!-- SYNC -->
+  <section id="tab-sync" class="hidden">
+    <div class="eyebrow">Backup &amp; sync</div>
+    <h2>Keep your data safe</h2>
+    <p class="lead">Your jobs are saved in this browser. Download a backup regularly, or connect a <b>private</b> GitHub repository so the data is stored on GitHub and you can open it on another computer.</p>
+    <div class="pb-grid" id="syncPanel"></div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="./pricing.js"></script>
+<script src="./store.js"></script>
+<script>
+/* ============ state ============ */
+const D = Store.load();
+let activeJobId = (D.jobs[0] || {}).id || null;
+let collapsed = {};          // stageKey -> bool (UI only)
+let lastTotal = null;
+
+function S(){ return Store.data.settings; }
+function jobs(){ return Store.data.jobs; }
+function job(){ return jobs().find(j => j.id === activeJobId); }
+function reqById(id){ return Store.data.requests.find(r => r.id === id); }
+
+function commit(msg){
+  const ok = Store.save();
+  const el = document.getElementById('saveState');
+  el.textContent = ok ? 'Saved ' + new Date().toLocaleTimeString('en-ZA',{hour:'2-digit',minute:'2-digit'}) : 'Not saved — storage blocked';
+  if(msg) toast(msg);
+}
+function toast(msg){
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ============ PIN gate (keeps casual visitors out; not bank-grade security) ============ */
+(function initGate(){
+  if(!Store.data.studioPinHash){
+    document.getElementById('gateTitle').textContent = 'Create a studio PIN';
+    document.getElementById('gateText').textContent = 'Choose a PIN (4+ digits) for this browser. You will use it to open the studio.';
+  }
+  try { if(sessionStorage.getItem('iss-unlocked') === '1' && Store.data.studioPinHash) unlock(); } catch(e){}
+  document.getElementById('pinInput').addEventListener('keydown', e => { if(e.key === 'Enter') submitPin(); });
+  setTimeout(() => document.getElementById('pinInput').focus(), 50);
+})();
+async function submitPin(){
+  const v = document.getElementById('pinInput').value.trim();
+  const err = document.getElementById('pinErr');
+  if(v.length < 4){ err.textContent = 'Use at least 4 digits.'; return; }
+  const h = await sha256('iss:' + v);
+  if(!Store.data.studioPinHash){ Store.data.studioPinHash = h; commit(); unlock(); return; }
+  if(h === Store.data.studioPinHash) unlock(); else err.textContent = 'That PIN is not right.';
+}
+function unlock(){
+  document.getElementById('gate').classList.add('hidden');
+  try { sessionStorage.setItem('iss-unlocked','1'); } catch(e){}
+}
+
+/* ============ tabs ============ */
+document.getElementById('tabs').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  showTab(b.dataset.tab);
+});
+function showTab(tab){
+  document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('active', x.dataset.tab === tab));
+  ['jobs','requests','pricebook','sync'].forEach(t => document.getElementById('tab-'+t).classList.toggle('hidden', t !== tab));
+  ({jobs:renderJobs, requests:renderRequests, pricebook:renderPriceBook, sync:renderSync})[tab]();
+  window.scrollTo(0,0);
+}
+
+/* ============ JOBS ============ */
+function createJob(requestId){
+  const r = requestId ? reqById(requestId) : null;
+  const metalGuess = r ? guessMetal(r.metal) : S().metals[1].key;
+  const j = Store.newJob(r ? `${r.name} — ${r.idea.slice(0,40)}${r.idea.length>40?'…':''}` : 'New piece', requestId, metalGuess);
+  jobs().unshift(j);
+  if(r && r.status === 'pending') r.status = 'discussion';
+  activeJobId = j.id;
+  logHistory(j, 'Job created');
+  commit('Job created');
+  showTab('jobs');
+}
+function guessMetal(text){
+  const t = (text || '').toLowerCase();
+  if(t.includes('silver')) return 'silver';
+  if(t.includes('plat')) return 'pt';
+  if(t.includes('18')) return '18ct';
+  if(t.includes('14')) return '14ct';
+  return '9ct';
+}
+function deleteJob(){
+  const j = job(); if(!j) return;
+  if(!confirmInline('delete')) return;
+  Store.data.jobs = jobs().filter(x => x.id !== j.id);
+  activeJobId = (jobs()[0] || {}).id || null;
+  commit('Job deleted'); renderJobs();
+}
+let pendingConfirm = null;
+function confirmInline(what){
+  // two-click confirmation instead of a browser dialog
+  if(pendingConfirm === what){ pendingConfirm = null; return true; }
+  pendingConfirm = what; toast('Click again to confirm'); setTimeout(() => { pendingConfirm = null; }, 3000);
+  return false;
+}
+function logHistory(j, text){
+  j.history = j.history || [];
+  j.history.unshift({ at: new Date().toISOString(), text });
+  j.history = j.history.slice(0, 80);
+}
+
+function renderJobs(){
+  renderMetalBanner();
+  const list = document.getElementById('jobList');
+  if(!jobs().length){
+    list.innerHTML = `<div class="job-item" style="cursor:default;color:var(--muted)">No jobs yet. Click “+ New job”, or start one from a design request.</div>`;
+  } else {
+    list.innerHTML = jobs().map(j => {
+      const c = Pricing.job(j, S());
+      return `<div class="job-item ${j.id===activeJobId?'active':''}" onclick="selectJob('${j.id}')">
+        <h4>${esc(j.title)}</h4>
+        <div class="meta"><span>${esc((Pricing.metal(S(), j.metal)||{}).label||'')}</span><span class="num">${randWhole(c.total)}</span></div>
+        <div class="dots">${STAGES.map(st => `<span class="${(j.stages[st.key]||{}).status||'todo'}" title="${st.label}"></span>`).join('')}</div>
+      </div>`;
+    }).join('');
+  }
+  renderJobDetail();
+  renderSummary();
+}
+function selectJob(id){ activeJobId = id; lastTotal = null; renderJobs(); }
+
+function renderMetalBanner(){
+  const zero = S().metals.filter(m => !m.pricePerGram);
+  const date = S().metalPriceDate;
+  const today = new Date().toISOString().slice(0,10);
+  let html = '';
+  if(zero.length) html += `No metal price entered for <b>${zero.map(m=>m.label).join(', ')}</b>. `;
+  if(date !== today) html += `Metal prices were last updated ${date ? '<b>'+date+'</b>' : '<b>never</b>'} — PMT charges the metal price of the day. `;
+  document.getElementById('metalBanner').innerHTML = html ?
+    `<div class="banner">${html}<a href="#" onclick="showTab('pricebook');return false" style="color:inherit;font-weight:600">Update in the price book →</a></div>` : '';
+}
+
+function renderJobDetail(){
+  const el = document.getElementById('jobDetail');
+  const j = job();
+  if(!j){ el.innerHTML = `<div class="card" style="padding:40px;text-align:center;color:var(--muted)">Select or create a job to start pricing.</div>`; return; }
+  const s = S();
+  const reqOpts = `<option value="">— none —</option>` + Store.data.requests.map(r =>
+    `<option value="${r.id}" ${r.id===j.requestId?'selected':''}>${esc(r.name)} (${esc(r.occasion)})</option>`).join('');
+  el.innerHTML = `
+    <div class="card job-head">
+      <div class="field title"><label>Piece</label><input value="${esc(j.title)}" onchange="setJob('title', this.value)"></div>
+      <div class="field"><label>Customer request</label><select onchange="setJob('requestId', this.value)">${reqOpts}</select></div>
+      <div class="field"><label>Main metal</label><select onchange="setJob('metal', this.value)">
+        ${s.metals.map(m => `<option value="${m.key}" ${m.key===j.metal?'selected':''}>${esc(m.label)}</option>`).join('')}</select></div>
+      <div class="field"><label>Mark-up (× override)</label><input type="number" step="0.1" min="0" placeholder="${s.pricing.markup}" value="${esc(j.markupOverride)}" onchange="setJob('markupOverride', this.value)"></div>
+      <div class="field"><label>Shadow % (this job)</label><input type="number" step="1" min="0" placeholder="${s.pricing.shadowPct}" value="${esc(j.shadowOverride)}" onchange="setJob('shadowOverride', this.value)"></div>
+    </div>
+    ${STAGES.map((st, i) => renderStage(j, st, i)).join('')}
+    <div class="card" style="margin-top:14px;padding:14px 18px">
+      <div class="field"><label>Notes</label><textarea onchange="setJob('notes', this.value)">${esc(j.notes)}</textarea></div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button class="btn ghost small" onclick="refreshPrices()">Refresh prices to today's rates</button>
+        <button class="btn ghost small" onclick="duplicateJob()">Duplicate job</button>
+        <button class="btn ghost small" style="border-color:var(--bad);color:var(--bad)" onclick="deleteJob()">Delete job</button>
+      </div>
+    </div>`;
+}
+
+function renderStage(j, st, i){
+  const data = j.stages[st.key];
+  const total = Pricing.stageTotal(data);
+  const isCollapsed = collapsed[st.key] ?? (data.lines.length === 0 && data.status === 'todo' && i > 0 && !stageIsNext(j, st.key));
+  return `
+  <div class="card stage ${isCollapsed?'collapsed':''}" id="stage-${st.key}">
+    <div class="stage-head" onclick="toggleStage('${st.key}', event)">
+      <span class="stage-num">${i+1}</span>
+      <h3>${st.label}<span class="hint">${st.hint}</span></h3>
+      <select class="status-sel ${data.status}" onclick="event.stopPropagation()" onchange="setStageStatus('${st.key}', this.value)">
+        <option value="todo" ${data.status==='todo'?'selected':''}>To do</option>
+        <option value="progress" ${data.status==='progress'?'selected':''}>In progress</option>
+        <option value="done" ${data.status==='done'?'selected':''}>Done</option>
+      </select>
+      <span class="stage-total num">${rand(total)}</span>
+    </div>
+    <div class="stage-body">
+      ${data.lines.length ? `
+      <table class="lines">
+        <thead><tr><th class="hide-sm"></th><th>Material / cost</th><th class="r">Qty</th><th class="hide-sm">Unit</th><th class="r">Unit cost</th><th class="r">Total</th><th></th></tr></thead>
+        <tbody>${data.lines.map((l, idx) => `
+          <tr>
+            <td class="hide-sm"><span class="kind ${l.kind}">${l.kind}</span></td>
+            <td><input value="${esc(l.desc)}" onchange="editLine('${st.key}',${idx},'desc',this.value)"></td>
+            <td class="r" style="width:80px"><input class="num" style="text-align:right" type="number" step="any" value="${l.qty}" onchange="editLine('${st.key}',${idx},'qty',this.value)"></td>
+            <td class="hide-sm" style="width:60px;color:var(--muted);font-size:12px">${esc(l.unit)}</td>
+            <td class="r" style="width:100px"><input class="num" style="text-align:right" type="number" step="any" value="${l.unitCost}" onchange="editLine('${st.key}',${idx},'unitCost',this.value)"></td>
+            <td class="r num" style="width:100px;font-weight:500">${rand(Pricing.lineTotal(l))}</td>
+            <td style="width:30px"><button class="icon-btn" title="Remove" onclick="removeLine('${st.key}',${idx})">×</button></td>
+          </tr>`).join('')}</tbody>
+      </table>` : `<div class="empty-lines">No materials or costs added for this stage yet.</div>`}
+      <div class="quick">${quickForms(st.key, j)}</div>
+    </div>
+  </div>`;
+}
+function stageIsNext(j, key){
+  const firstOpen = STAGES.find(st => (j.stages[st.key].status !== 'done'));
+  return firstOpen && firstOpen.key === key;
+}
+function toggleStage(key, e){
+  if(e.target.closest('select,input,button')) return;
+  const el = document.getElementById('stage-'+key);
+  collapsed[key] = !el.classList.contains('collapsed');
+  el.classList.toggle('collapsed');
+}
+
+/* ---- stage-specific quick-add forms ---- */
+function metalSelect(id, sel){ return `<select id="${id}">${S().metals.map(m => `<option value="${m.key}" ${m.key===sel?'selected':''}>${esc(m.label)}</option>`).join('')}</select>`; }
+function catSelect(id, groups){
+  const items = S().catalog.filter(c => !groups || groups.includes(c.group));
+  const gs = [...new Set(items.map(c => c.group))];
+  return `<select id="${id}">${gs.map(g => `<optgroup label="${esc(g)}">${items.filter(c=>c.group===g).map(c =>
+    `<option value="${c.key}">${esc(c.label)} — ${rand(c.price)}/${esc(c.unit)}</option>`).join('')}</optgroup>`).join('')}</select>`;
+}
+function f(label, inner, cls){ return `<div class="field ${cls||''}"><label>${label}</label>${inner}</div>`; }
+function num(id, val, step){ return `<input id="${id}" type="number" step="${step||'any'}" min="0" value="${val??''}">`; }
+
+function quickForms(key, j){
+  const s = S(); const k = key;
+  const custom = `
+    <div class="quick-row">
+      ${f('Other material / cost', `<input id="${k}-c-desc" placeholder="e.g. 45cm trace chain, findings, packaging box">`, 'wide')}
+      ${f('Qty', num(`${k}-c-qty`, 1), 'narrow')}
+      ${f('Unit', `<input id="${k}-c-unit" value="each">`, 'narrow')}
+      ${f('Unit cost (R)', num(`${k}-c-cost`, ''))}
+      <button class="btn ghost small" onclick="addCustom('${k}')">Add</button>
+    </div>`;
+  const book = (groups) => `
+    <div class="quick-row">
+      ${f('From price book', catSelect(`${k}-b-item`, groups), 'wide')}
+      ${f('Qty', num(`${k}-b-qty`, 1), 'narrow')}
+      <button class="btn small" onclick="addBook('${k}')">Add</button>
+    </div>`;
+  const labour = (label) => `
+    <div class="quick-row">
+      ${f(label || 'Your labour (hours)', num(`${k}-l-hrs`, '', '0.25'))}
+      <span class="preview">× ${rand(s.labourRate)}/hr</span>
+      <button class="btn small" onclick="addLabour('${k}')">Add labour</button>
+    </div>`;
+  switch(key){
+    case 'design': return `<h5>Add design cost</h5>${book(['CAD design (PMT)'])}${labour('Own design time (hours)')}${custom}`;
+    case 'print': return `<h5>In-house resin print</h5>
+      <div class="quick-row">
+        ${f('Resin', `<select id="print-resin">${s.resins.map(r => `<option value="${r.key}" ${r.key==='castable'?'selected':''}>${esc(r.label)} (${rand(r.bottlePrice/r.bottleMl)}/mL)</option>`).join('')}</select>`, 'wide')}
+        ${f('Resin used (mL)', num('print-ml', ''))}
+        ${f('Print time (hrs)', num('print-hrs', '', '0.25'))}
+        <button class="btn small" onclick="addResinPrint()">Add print</button>
+      </div>
+      <h5>Or outsourced print</h5>${book(['Printing & casting (PMT)'])}${custom}`;
+    case 'cast': return `<h5>Metal used</h5>
+      <div class="quick-row">
+        ${f('Metal', metalSelect('cast-metal', j.metal), 'wide')}
+        ${f('Weight (g)', num('cast-g', '', '0.01'))}
+        ${f('Add casting fee', `<select id="cast-fee"><option value="1">Yes (PMT casts)</option><option value="0">No (metal only)</option></select>`)}
+        <button class="btn small" onclick="addCasting()">Add metal</button>
+      </div>
+      <h5>Casting extras</h5>${book(['Printing & casting (PMT)'])}${custom}`;
+    case 'finish': return `<h5>Full finishing (per gram)</h5>
+      <div class="quick-row">
+        ${f('Metal', metalSelect('fin-metal', lastMetal(j)), 'wide')}
+        ${f('Weight (g)', num('fin-g', lastGrams(j), '0.01'))}
+        <button class="btn small" onclick="addFinishing()">Add finishing</button>
+      </div>
+      <h5>Other finishing</h5>${book(['Finishing (PMT)'])}${labour('Own polishing time (hours)')}${custom}`;
+    case 'setting': return `<h5>Stones</h5>
+      <div class="quick-row">
+        ${f('Stone', `<input id="set-desc" placeholder="e.g. 1.5mm lab diamond, round">`, 'wide')}
+        ${f('How many', num('set-qty', 1, 1), 'narrow')}
+        ${f('Cost each (R)', num('set-cost', ''))}
+      </div>
+      <div class="quick-row">
+        ${f('Setting style (PMT, per stone)', `<select id="set-style"><option value="">— no setting fee —</option>${S().catalog.filter(c=>c.group==='Stone setting (PMT)').map(c=>`<option value="${c.key}">${esc(c.label)} — ${rand(c.price)}/${esc(c.unit)}</option>`).join('')}</select>`, 'wide')}
+        <button class="btn small" onclick="addStones()">Add stones</button>
+      </div>${custom}`;
+    case 'extras': return `<h5>Add service</h5>${book(['Assembly & extras (PMT)','Finishing (PMT)'])}${custom}`;
+    case 'qc': return `<h5>Final items</h5>${labour('Final QC / packing (hours)')}${custom}`;
+  }
+}
+function lastMetal(j){
+  const m = j.stages.cast.lines.filter(l => l.kind === 'metal').pop();
+  const found = m && S().metals.find(x => m.desc.startsWith(x.label));
+  return found ? found.key : j.metal;
+}
+function lastGrams(j){
+  const m = j.stages.cast.lines.filter(l => l.kind === 'metal');
+  return m.length ? m.reduce((a,l)=>a+(+l.qty||0),0) : '';
+}
+function val(id){ const el = document.getElementById(id); return el ? el.value : ''; }
+function numv(id){ return parseFloat(val(id)) || 0; }
+
+function addLines(stageKey, lines, label){
+  const j = job(); if(!j || !lines.length) return;
+  const before = Pricing.job(j, S()).total;
+  j.stages[stageKey].lines.push(...lines.map(l => ({...l, addedAt:new Date().toISOString()})));
+  if(j.stages[stageKey].status === 'todo') j.stages[stageKey].status = 'progress';
+  const after = Pricing.job(j, S()).total;
+  const st = STAGES.find(x => x.key === stageKey);
+  logHistory(j, `<b>${st.label}:</b> ${label} → price ${randWhole(before)} → <b>${randWhole(after)}</b>`);
+  syncQuoteDraft(j);
+  commit(`${st.label} updated — price now ${randWhole(after)}`);
+  collapsed[stageKey] = false;
+  renderJobs();
+}
+function addCustom(k){
+  const desc = val(`${k}-c-desc`).trim(), qty = numv(`${k}-c-qty`), cost = numv(`${k}-c-cost`);
+  if(!desc || !qty){ toast('Enter a description and quantity'); return; }
+  addLines(k, [{kind:'material', desc, qty, unit: val(`${k}-c-unit`)||'each', unitCost: cost}], `${qty} × ${desc}`);
+}
+function addBook(k){
+  const key = val(`${k}-b-item`), qty = numv(`${k}-b-qty`);
+  if(!qty){ toast('Enter a quantity'); return; }
+  const lines = Pricing.catalogLine(S(), key, qty);
+  addLines(k, lines, `${qty} × ${lines[0].desc}`);
+}
+function addLabour(k){
+  const h = numv(`${k}-l-hrs`); if(!h){ toast('Enter hours'); return; }
+  addLines(k, Pricing.labourLine(S(), h, k === 'design' ? 'Design time' : k === 'finish' ? 'Polishing time' : 'Studio labour'), `${h} hr labour`);
+}
+function addResinPrint(){
+  const ml = numv('print-ml'), h = numv('print-hrs'); if(!ml){ toast('Enter resin used (mL)'); return; }
+  addLines('print', Pricing.resinPrintLines(S(), val('print-resin'), ml, h), `${ml} mL resin, ${h} hr print`);
+}
+function addCasting(){
+  const g = numv('cast-g'); if(!g){ toast('Enter the metal weight in grams'); return; }
+  const m = Pricing.metal(S(), val('cast-metal'));
+  if(!m.pricePerGram) toast(`No price of the day for ${m.label} — update the price book`);
+  addLines('cast', Pricing.metalLines(S(), m.key, g, {includeCasting: val('cast-fee') === '1'}), `${g} g ${m.label}`);
+}
+function addFinishing(){
+  const g = numv('fin-g'); if(!g){ toast('Enter the weight in grams'); return; }
+  addLines('finish', Pricing.finishingLine(S(), val('fin-metal'), g), `${g} g finishing`);
+}
+function addStones(){
+  const qty = numv('set-qty'); if(!qty){ toast('Enter how many stones'); return; }
+  const desc = val('set-desc').trim(), cost = numv('set-cost'), style = val('set-style');
+  if(!desc && !cost && !style){ toast('Enter a stone, cost or setting style'); return; }
+  addLines('setting', Pricing.stoneLines(S(), {stoneDesc: desc || 'Stones', qty, costEach: cost, settingKey: style}), `${qty} × ${desc || 'stones'}`);
+}
+function editLine(stageKey, idx, field, value){
+  const j = job(); const l = j.stages[stageKey].lines[idx];
+  const before = Pricing.job(j, S()).total;
+  l[field] = field === 'desc' ? value : (parseFloat(value) || 0);
+  const after = Pricing.job(j, S()).total;
+  if(field !== 'desc') logHistory(j, `<b>${STAGES.find(s=>s.key===stageKey).label}:</b> edited “${esc(l.desc)}” → ${randWhole(before)} → <b>${randWhole(after)}</b>`);
+  syncQuoteDraft(j); commit(); renderJobs();
+}
+function removeLine(stageKey, idx){
+  const j = job(); const l = j.stages[stageKey].lines.splice(idx, 1)[0];
+  logHistory(j, `<b>${STAGES.find(s=>s.key===stageKey).label}:</b> removed “${esc(l.desc)}” → <b>${randWhole(Pricing.job(j,S()).total)}</b>`);
+  syncQuoteDraft(j); commit('Line removed'); renderJobs();
+}
+function setStageStatus(key, v){
+  const j = job(); j.stages[key].status = v;
+  logHistory(j, `<b>${STAGES.find(s=>s.key===key).label}</b> marked ${v === 'done' ? 'done' : v === 'progress' ? 'in progress' : 'to do'}`);
+  const r = reqById(j.requestId);
+  if(r && v !== 'todo' && ['approved','deposit'].includes(r.status) && key !== 'design') r.status = 'progress';
+  if(r && key === 'qc' && v === 'done') r.status = 'complete';
+  commit(); renderJobs();
+}
+function setJob(field, value){
+  const j = job(); j[field] = value;
+  if(field === 'markupOverride') logHistory(j, `Mark-up set to ${value || S().pricing.markup}×`);
+  if(field === 'shadowOverride') logHistory(j, `Shadow set to ${value || S().pricing.shadowPct}% for this job`);
+  commit(); renderJobs();
+}
+function refreshPrices(){
+  const j = job(); const s = S(); let n = 0;
+  Object.values(j.stages).forEach(st => st.lines.forEach(l => {
+    const m = s.metals.find(m => l.desc.startsWith(m.label));
+    let nv = null;
+    if(l.kind === 'metal' && m) nv = m.pricePerGram;
+    else if(m && l.desc.endsWith('casting fee')) nv = m.casting;
+    else if(m && l.desc.endsWith('full finishing')) nv = m.finishing;
+    else if(l.kind === 'labour') nv = s.labourRate;
+    else { const c = s.catalog.find(c => c.label === l.desc); if(c) nv = c.price;
+           const r = s.resins.find(r => r.label === l.desc); if(r) nv = Math.round(r.bottlePrice / r.bottleMl * 10000)/10000; }
+    if(nv !== null && nv !== l.unitCost){ l.unitCost = nv; n++; }
+  }));
+  logHistory(j, `Prices refreshed (${n} line${n===1?'':'s'} changed) → <b>${randWhole(Pricing.job(j,s).total)}</b>`);
+  syncQuoteDraft(j); commit(n ? `${n} line(s) updated to today's rates` : 'All lines already at current rates'); renderJobs();
+}
+function duplicateJob(){
+  const j = JSON.parse(JSON.stringify(job()));
+  j.id = 'j' + Date.now().toString(36); j.title += ' (copy)'; j.requestId = ''; j.history = []; j.createdAt = new Date().toISOString();
+  Object.values(j.stages).forEach(st => st.status = 'todo');
+  jobs().unshift(j); activeJobId = j.id; logHistory(j, 'Duplicated'); commit('Job duplicated'); renderJobs();
+}
+
+/* ---- summary panel ---- */
+function renderSummary(){
+  const el = document.getElementById('summary');
+  const j = job();
+  if(!j){ el.innerHTML = `<h3>Price</h3><div class="sub">No job selected</div>`; return; }
+  const s = S(), p = s.pricing, c = Pricing.job(j, s);
+  const r = reqById(j.requestId);
+  const flash = lastTotal !== null && lastTotal !== c.total ? 'flash' : '';
+  lastTotal = c.total;
+  const budget = r ? budgetCheck(r.budget, c.total) : '';
+  el.innerHTML = `
+    <h3>Live price</h3>
+    <div class="sub">Updates automatically as each stage adds materials</div>
+    ${c.stages.map(st => `<div class="srow stage-row"><span>${st.label}</span><span class="num">${rand(st.total)}</span></div>`).join('')}
+    <div class="srow line"><span>Total costs</span><span class="num">${rand(c.cost)}</span></div>
+    <div class="srow"><span>Overheads ${p.overheadsPct}%</span><span class="num">${rand(c.overheads)}</span></div>
+    <div class="srow"><span>Risk ${p.riskPct}%</span><span class="num">${rand(c.risk)}</span></div>
+    <div class="srow"><span class="shadow-tag">Shadow ${c.shadowPct}%${j.shadowOverride!==''&&j.shadowOverride!=null?' (this job)':''} <small style="color:#a89a7c">(${p.shadowBase==='metal'?'on metal':'on all costs'})</small></span><span class="num">${rand(c.shadow)}</span></div>
+    <div class="srow line"><span>Cost price</span><span class="num">${rand(c.subtotal)}</span></div>
+    <div class="srow"><span>Mark-up</span><span class="num">× ${c.markup}</span></div>
+    ${p.vatRegistered ? `<div class="srow"><span>Retail excl. VAT</span><span class="num">${rand(c.retail)}</span></div>
+      <div class="srow"><span>VAT ${p.vatPct}%</span><span class="num">${rand(c.vat)}</span></div>` : ''}
+    <div class="srow big line ${flash}"><small>${p.vatRegistered ? 'Total incl. VAT' : 'Selling price'}</small><span class="num">${randWhole(c.total)}</span></div>
+    <div class="srow"><span>Deposit ${p.depositPct}%</span><span class="num">${rand(c.deposit)}</span></div>
+    <div class="srow"><span>Gross profit</span><span class="num">${rand(c.profit)}</span></div>
+    ${!p.vatRegistered ? `<div class="srow stage-row"><span>No VAT charged (not VAT registered)</span></div>` : ''}
+    ${budget}
+    ${c.warnings.length ? `<div class="warn-list">⚠ ${c.warnings.slice(0,4).map(esc).join('<br>⚠ ')}</div>` : ''}
+    ${r ? `<button class="btn gold" onclick="sendQuote()">${r.quote ? 'Update quote to customer' : 'Send quote to customer'}</button>
+           <div class="sub" style="margin:8px 0 0">${r.quote ? `Customer sees ${randWhole(r.quote.total)} (sent ${new Date(r.quote.sentAt).toLocaleDateString('en-ZA')})${r.quote.total !== c.total ? ' — <span style="color:#f0cf8a">price has changed since</span>' : ''}` : 'Customer sees no price until you send it.'}</div>`
+         : `<div class="sub" style="margin-top:12px">Link a customer request to send this as a quote.</div>`}
+    <button class="btn ghost" style="border-color:var(--ink-line);color:var(--cream)" onclick="printQuote()">Print / save quote</button>
+    <div class="history">${(j.history||[]).map(h => `<div>${new Date(h.at).toLocaleString('en-ZA',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})} · ${h.text}</div>`).join('')}</div>`;
+}
+function budgetCheck(budget, total){
+  const nums = (budget||'').replace(/[^\d–\-+ ]/g,'').split(/[–\-]/).map(x => parseInt(x.replace(/\D/g,''))).filter(Boolean);
+  if(!nums.length) return '';
+  const max = budget.includes('+') ? Infinity : Math.max(...nums);
+  const min = budget.toLowerCase().includes('under') ? 0 : Math.min(...nums);
+  if(total > max) return `<div class="budget over">Over the customer's budget (${esc(budget)}) by ${randWhole(total - max)}</div>`;
+  if(total < min) return `<div class="budget">Below the customer's budget (${esc(budget)})</div>`;
+  return `<div class="budget">Within the customer's budget (${esc(budget)})</div>`;
+}
+function syncQuoteDraft(j){ /* quotes are only changed when you press Send — nothing to do automatically */ }
+function sendQuote(){
+  const j = job(); const r = reqById(j.requestId); if(!r) return;
+  const c = Pricing.job(j, S());
+  const isUpdate = !!r.quote;
+  r.quote = { total: c.total, deposit: c.deposit, vat: c.vat, jobId: j.id, sentAt: new Date().toISOString(), title: j.title };
+  r.messages.push({ from:'studio', text: `${isUpdate ? 'Updated quote' : 'Your quote'} for “${j.title}”: ${randWhole(c.total)}${S().pricing.vatRegistered ? ' incl. VAT' : ''}. A ${S().pricing.depositPct}% deposit of ${randWhole(c.deposit)} secures your order.` });
+  if(['pending','discussion'].includes(r.status)) r.status = 'approved';
+  logHistory(j, `Quote ${isUpdate?'updated':'sent'} to ${esc(r.name)}: <b>${randWhole(c.total)}</b>`);
+  commit(`Quote sent to ${r.name}`); renderJobs();
+}
+function printQuote(){
+  const j = job(), s = S(), c = Pricing.job(j, s), r = reqById(j.requestId);
+  const w = window.open('', '_blank');
+  if(!w){ toast('Allow pop-ups to print the quote'); return; }
+  w.document.write(`<html><head><title>Quote — ${esc(j.title)}</title><style>
+    body{font-family:Georgia,serif;max-width:640px;margin:40px auto;color:#241D14;padding:0 16px}
+    h1{font-weight:500;font-style:italic}table{width:100%;border-collapse:collapse}td{padding:8px 0;border-bottom:1px solid #ddd}
+    td:last-child{text-align:right}.tot td{font-size:20px;font-weight:bold;border-bottom:2px solid #241D14}small{color:#777}</style></head><body>
+    <h1>Infinity Sparkle Studios</h1><p><b>Quotation</b><br>${new Date().toLocaleDateString('en-ZA')}<br>
+    ${r ? `Client: ${esc(r.name)}<br>${esc(r.email)}` : ''}</p><p><b>${esc(j.title)}</b><br><small>${esc((Pricing.metal(s,j.metal)||{}).label||'')}</small></p>
+    <table>${c.stages.filter(st=>st.total>0).map(st=>`<tr><td>${st.label}</td><td>included</td></tr>`).join('')}
+    ${s.pricing.vatRegistered ? `<tr><td>Subtotal</td><td>${rand(c.retail)}</td></tr><tr><td>VAT ${s.pricing.vatPct}%</td><td>${rand(c.vat)}</td></tr>` : ''}
+    <tr class="tot"><td>Total</td><td>${rand(c.total)}</td></tr><tr><td>Deposit to begin (${s.pricing.depositPct}%)</td><td>${rand(c.deposit)}</td></tr></table>
+    <p><small>Metal is charged at the price of the day; this quote is valid for 7 days. ${s.pricing.vatRegistered ? '' : 'No VAT is charged.'}</small></p>
+    <script>window.print()<\/script></body></html>`);
+  w.document.close();
+}
+
+/* ============ REQUESTS ============ */
+const REQ_STATUS = {pending:'Pending review', discussion:'In discussion', approved:'Design approved', deposit:'Deposit paid', progress:'In progress', complete:'Complete'};
+function renderRequests(){
+  const t = document.getElementById('reqTable');
+  const rs = Store.data.requests;
+  if(!rs.length){ t.innerHTML = `<tr><td style="padding:24px;color:var(--muted)">No design requests in this browser yet.</td></tr>`; return; }
+  t.innerHTML = `<thead><tr><th>Customer</th><th>Idea</th><th>Budget</th><th>Status</th><th>Job &amp; price</th><th>Quote sent</th><th></th></tr></thead><tbody>` +
+    rs.map(r => {
+      const js = jobs().filter(j => j.requestId === r.id);
+      return `<tr>
+        <td><b>${esc(r.name)}</b><br><span style="font-size:11.5px;color:var(--muted)">${esc(r.email)}</span>${r.demo?' <span class="pill">demo</span>':''}</td>
+        <td style="max-width:280px;font-size:13px">${esc(r.idea.slice(0,110))}${r.idea.length>110?'…':''}<br><span style="font-size:11.5px;color:var(--muted)">${esc(r.metal)} · ${esc(r.occasion)}</span></td>
+        <td style="white-space:nowrap">${esc(r.budget)}</td>
+        <td><select onchange="setReqStatus('${r.id}', this.value)">${Object.entries(REQ_STATUS).map(([k,v]) => `<option value="${k}" ${r.status===k?'selected':''}>${v}</option>`).join('')}</select></td>
+        <td>${js.length ? js.map(j => `<a href="#" onclick="activeJobId='${j.id}';showTab('jobs');return false">${esc(j.title.slice(0,28))}</a> <span class="num">${randWhole(Pricing.job(j,S()).total)}</span>`).join('<br>') : '<span style="color:var(--muted)">—</span>'}</td>
+        <td class="num">${r.quote ? randWhole(r.quote.total) : '—'}</td>
+        <td style="white-space:nowrap"><button class="btn small" onclick="createJob('${r.id}')">${js.length ? '+ Another job' : 'Start job'}</button>
+          <a class="btn ghost small" style="text-decoration:none;display:inline-block;margin-left:4px" href="mailto:${encodeURIComponent(r.email)}?subject=${encodeURIComponent('Your Infinity Sparkle Studios design')}">Email</a></td>
+      </tr>`;
+    }).join('') + '</tbody>';
+}
+function setReqStatus(id, v){ reqById(id).status = v; commit('Status updated'); }
+
+/* ============ PRICE BOOK ============ */
+function renderPriceBook(){
+  const s = S(), p = s.pricing;
+  document.getElementById('pricebook').innerHTML = `
+    <div class="card pb-section" style="grid-column:1 / -1">
+      <h3>Metals</h3>
+      <p class="note">Price of the day per gram (from PMT's daily metal price), plus PMT's casting and finishing fees per gram. Source: ${esc(s.priceListNote)}.</p>
+      <div class="quick-row" style="margin-bottom:10px">
+        ${f('Metal prices dated', `<input type="date" value="${esc(s.metalPriceDate)}" onchange="S().metalPriceDate=this.value;commit('Saved');renderMetalBanner()">`)}
+        <button class="btn small" onclick="S().metalPriceDate=new Date().toISOString().slice(0,10);commit('Marked as today');renderPriceBook()">Mark prices as today's</button>
+      </div>
+      <div class="scroll-x"><table class="grid"><thead><tr><th>Metal</th><th>Price of the day (R/g)</th><th>Casting fee (R/g)</th><th>Finishing fee (R/g)</th></tr></thead><tbody>
+      ${s.metals.map((m,i) => `<tr><td><input value="${esc(m.label)}" onchange="S().metals[${i}].label=this.value;commit('Saved')"></td>
+        ${['pricePerGram','casting','finishing'].map(k => `<td><input class="num" type="number" step="any" value="${m[k]}" onchange="S().metals[${i}].${k}=parseFloat(this.value)||0;commit('Saved')"></td>`).join('')}</tr>`).join('')}
+      </tbody></table></div>
+    </div>
+
+    <div class="card pb-section">
+      <h3>Pricing formula</h3>
+      <p class="note">Costs + overheads + risk + shadow = cost price. Cost price × mark-up = selling price.</p>
+      <div class="form-grid">
+        ${pbNum('Overheads %','overheadsPct')}${pbNum('Risk %','riskPct')}${pbNum('Shadow %','shadowPct')}
+        ${f('Shadow applies to', `<select onchange="S().pricing.shadowBase=this.value;commit('Saved')"><option value="all" ${p.shadowBase==='all'?'selected':''}>All costs</option><option value="metal" ${p.shadowBase==='metal'?'selected':''}>Metal value only</option></select>`)}
+        ${pbNum('Mark-up (×)','markup')}${pbNum('Deposit %','depositPct')}${pbNum('Round selling price up to (R)','roundTo')}
+        ${f('VAT registered', `<select onchange="S().pricing.vatRegistered=this.value==='1';commit('Saved')"><option value="0" ${!p.vatRegistered?'selected':''}>No</option><option value="1" ${p.vatRegistered?'selected':''}>Yes</option></select>`)}
+        ${pbNum('VAT %','vatPct')}
+      </div>
+    </div>
+
+    <div class="card pb-section">
+      <h3>Labour &amp; printer</h3>
+      <p class="note">Your hourly rate and the in-house resin printer running costs.</p>
+      <div class="form-grid">
+        ${f('Labour rate (R/hr)', `<input type="number" step="any" value="${s.labourRate}" onchange="S().labourRate=parseFloat(this.value)||0;commit('Saved')">`)}
+        ${f('Printer name', `<input value="${esc(s.printer.label)}" onchange="S().printer.label=this.value;commit('Saved')">`)}
+        ${prNum('Printer power (watts)','watts')}${prNum('Electricity (R/kWh)','electricityPerKwh')}
+        ${prNum('Wear & tear (R/hr)','wearPerHour')}${prNum('Post-processing (R/print)','postProcessing')}
+      </div>
+    </div>
+
+    <div class="card pb-section">
+      <h3>Resins</h3>
+      <p class="note">From your Elegoo resin library.</p>
+      <table class="grid"><thead><tr><th>Resin</th><th>Bottle (mL)</th><th>Bottle price (R)</th><th>R/mL</th></tr></thead><tbody>
+      ${s.resins.map((r,i) => `<tr><td><input value="${esc(r.label)}" onchange="S().resins[${i}].label=this.value;commit('Saved')"></td>
+        <td><input class="num" type="number" value="${r.bottleMl}" onchange="S().resins[${i}].bottleMl=parseFloat(this.value)||1;commit('Saved');renderPriceBook()"></td>
+        <td><input class="num" type="number" step="any" value="${r.bottlePrice}" onchange="S().resins[${i}].bottlePrice=parseFloat(this.value)||0;commit('Saved');renderPriceBook()"></td>
+        <td class="num">${rand(r.bottlePrice/r.bottleMl)}</td></tr>`).join('')}
+      </tbody></table>
+      <button class="btn ghost small" style="margin-top:10px" onclick="S().resins.push({key:'r'+Date.now(),label:'New resin',bottleMl:1000,bottlePrice:0});commit('Added');renderPriceBook()">+ Add resin</button>
+    </div>
+
+    <div class="card pb-section">
+      <h3>Services &amp; fees</h3>
+      <p class="note">PMT price list items used in the stage forms.</p>
+      <div class="scroll-x" style="max-height:460px;overflow:auto"><table class="grid"><thead><tr><th>Group</th><th>Item</th><th>Price (R)</th><th>Per</th></tr></thead><tbody>
+      ${s.catalog.map((c,i) => `<tr><td style="font-size:11.5px;color:var(--muted)">${esc(c.group)}</td>
+        <td><input value="${esc(c.label)}" onchange="S().catalog[${i}].label=this.value;commit('Saved')"></td>
+        <td style="width:100px"><input class="num" type="number" step="any" value="${c.price}" onchange="S().catalog[${i}].price=parseFloat(this.value)||0;commit('Saved')"></td>
+        <td style="width:80px"><input value="${esc(c.unit)}" onchange="S().catalog[${i}].unit=this.value;commit('Saved')"></td></tr>`).join('')}
+      </tbody></table></div>
+      <div class="quick-row" style="margin-top:10px">
+        ${f('Group', `<input id="nc-group" value="My services">`)}${f('Item', `<input id="nc-label">`, 'wide')}${f('Price', num('nc-price',''), 'narrow')}${f('Per', `<input id="nc-unit" value="item">`, 'narrow')}
+        <button class="btn small" onclick="addCatalogItem()">Add</button>
+      </div>
+    </div>`;
+}
+function pbNum(label, key){ return f(label, `<input type="number" step="any" value="${S().pricing[key]}" onchange="S().pricing.${key}=parseFloat(this.value)||0;commit('Saved')">`); }
+function prNum(label, key){ return f(label, `<input type="number" step="any" value="${S().printer[key]}" onchange="S().printer.${key}=parseFloat(this.value)||0;commit('Saved')">`); }
+function addCatalogItem(){
+  const label = val('nc-label').trim(); if(!label){ toast('Enter an item name'); return; }
+  S().catalog.push({ key:'c'+Date.now().toString(36), group: val('nc-group')||'My services', label, price: numv('nc-price'), unit: val('nc-unit')||'item' });
+  commit('Item added'); renderPriceBook();
+}
+
+/* ============ SYNC ============ */
+function renderSync(){
+  const g = Store.data.github;
+  document.getElementById('syncPanel').innerHTML = `
+    <div class="card pb-section">
+      <h3>Backup file</h3>
+      <p class="note">Download everything (jobs, requests, price book) as one file. Restore it on any computer.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="Store.exportFile()">Download backup</button>
+        <label class="btn ghost" style="display:inline-block">Restore from file<input type="file" accept=".json" style="display:none" onchange="restoreFile(this)"></label>
+      </div>
+      <p class="note" style="margin-top:16px">Last saved: ${new Date(Store.data.updatedAt).toLocaleString('en-ZA')}</p>
+      <hr style="border:none;border-top:1px solid var(--cream-line);margin:16px 0">
+      <h3 style="font-size:17px">Demo data</h3>
+      <p class="note">Removes the two sample customers and the sample job.</p>
+      <button class="btn ghost small" onclick="clearDemo()">Remove demo data</button>
+    </div>
+    <div class="card pb-section">
+      <h3>GitHub sync</h3>
+      <p class="note">Stores your data file in a <b>private</b> GitHub repository (not the public website repo — it contains customer names and emails). Needs a fine-grained token with “Contents: read and write” on that repo only. The token stays in this browser.</p>
+      <div class="form-grid">
+        ${f('GitHub username', `<input id="gh-owner" value="${esc(g.owner)}">`)}
+        ${f('Private repo name', `<input id="gh-repo" value="${esc(g.repo)}" placeholder="iss-studio-data">`)}
+        ${f('Branch', `<input id="gh-branch" value="${esc(g.branch)}">`)}
+        ${f('File path', `<input id="gh-path" value="${esc(g.path)}">`)}
+      </div>
+      <div class="field" style="margin-top:12px"><label>Access token</label><input id="gh-token" type="password" placeholder="${Store.getToken() ? '•••••••• (saved)' : 'github_pat_…'}"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn ghost small" onclick="saveGh()">Save settings</button>
+        <button class="btn small" onclick="ghDo('push')">Push to GitHub</button>
+        <button class="btn small" onclick="ghDo('pull')">Pull from GitHub</button>
+      </div>
+      <p class="note" style="margin-top:12px" id="ghStatus">${g.lastPush ? 'Last push: ' + new Date(g.lastPush).toLocaleString('en-ZA') : 'Not synced yet.'}</p>
+    </div>`;
+}
+function restoreFile(input){
+  const file = input.files[0]; if(!file) return;
+  const rd = new FileReader();
+  rd.onload = () => { try { Store.importText(rd.result); activeJobId = (jobs()[0]||{}).id; commit('Backup restored'); renderSync(); } catch(e){ toast(e.message); } };
+  rd.readAsText(file);
+}
+function clearDemo(){
+  if(!confirmInline('demo')) return;
+  Store.data.requests = Store.data.requests.filter(r => !r.demo);
+  Store.data.jobs = jobs().filter(j => !j.demo);
+  activeJobId = (jobs()[0]||{}).id || null;
+  commit('Demo data removed'); renderSync();
+}
+function saveGh(){
+  const g = Store.data.github;
+  g.owner = val('gh-owner').trim(); g.repo = val('gh-repo').trim(); g.branch = val('gh-branch').trim() || 'main'; g.path = val('gh-path').trim() || 'data/iss-data.json';
+  const t = val('gh-token').trim(); if(t) Store.setToken(t);
+  commit('Sync settings saved'); renderSync();
+}
+async function ghDo(action){
+  saveGh();
+  const st = document.getElementById('ghStatus'); st.textContent = action === 'push' ? 'Pushing…' : 'Pulling…';
+  try { await Store[action](); commit(action === 'push' ? 'Pushed to GitHub' : 'Pulled from GitHub'); activeJobId = activeJobId || (jobs()[0]||{}).id; renderSync(); }
+  catch(e){ document.getElementById('ghStatus').textContent = e.message; toast('Sync failed'); }
+}
+
+/* ============ keep in step with the website tab (same browser) ============ */
+window.addEventListener('storage', e => {
+  if(e.key === STORE_KEY){ Store.load(); const tab = document.querySelector('#tabs button.active').dataset.tab; showTab(tab); toast('New activity from the website'); }
+});
+
+renderJobs();
+</script>
+</body>
+</html>

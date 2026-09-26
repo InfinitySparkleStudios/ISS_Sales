@@ -1,0 +1,16 @@
+{
+  "name": "Infinity Sparkle Studios",
+  "short_name": "Infinity Sparkle",
+  "description": "Custom and ready-to-wear jewellery from Infinity Sparkle Studios — browse the collection, request a custom design, and track your quote.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F1EAD9",
+  "theme_color": "#241D14",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
