@@ -1,6 +1,6 @@
 // Infinity Sparkle Studios — app shell service worker
 // Bump CACHE_NAME whenever index.html/manifest/icons change so old installs pick up updates.
-const CACHE_NAME = 'iss-app-v1';
+const CACHE_NAME = 'iss-app-v2';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
