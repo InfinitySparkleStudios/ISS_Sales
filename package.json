@@ -1,0 +1,43 @@
+{
+  "name": "iss-sales-desktop",
+  "version": "1.0.0",
+  "description": "Infinity Sparkle Studios — desktop shop app",
+  "main": "main.js",
+  "author": "Infinity Sparkle Studios",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis portable"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.infinitysparklestudios.app",
+    "productName": "Infinity Sparkle Studios",
+    "files": [
+      "main.js",
+      "app/**/*",
+      "build/icon.ico"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "portable", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Infinity Sparkle Studios"
+    }
+  }
+}
