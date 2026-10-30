@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keepsake Studio</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#f7f3ec;--surface:#fffdf9;--surface-2:#f1ebe0;--ink:#1f1b2e;--ink-2:#5b5568;--line:#e4dccd;--gold:#a8843f;--gold-soft:#efe3c9;--danger:#b3412f;--ok:#3d7a57;--serif:"Cormorant Garamond",Georgia,serif;--sans:"Jost",system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15121f;--surface:#1e1a2b;--surface-2:#272236;--ink:#f3eee6;--ink-2:#b4adbf;--line:#342e45;--gold:#d4b06a;--gold-soft:#3a3226;--danger:#ef7d6a;--ok:#7cc59a}}
+:root[data-theme="dark"]{--bg:#15121f;--surface:#1e1a2b;--surface-2:#272236;--ink:#f3eee6;--ink-2:#b4adbf;--line:#342e45;--gold:#d4b06a;--gold-soft:#3a3226;--danger:#ef7d6a;--ok:#7cc59a}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:15px/1.5 var(--sans)}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--serif);font-weight:600;margin:0;line-height:1.15}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.hidden{display:none!important}.muted{color:var(--ink-2)}.small{font-size:.85rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid transparent;border-radius:999px;padding:9px 18px;font-weight:500;cursor:pointer;background:var(--ink);color:var(--bg);min-height:40px;text-decoration:none}
+.btn.gold{background:var(--gold);color:#fff}.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}.btn.danger{background:transparent;color:var(--danger);border-color:var(--line)}
+.btn.sm{padding:6px 12px;min-height:32px;font-size:.86rem}.btn[disabled]{opacity:.5}
+.input{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 12px;outline:none;min-height:42px}
+.input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+textarea.input{min-height:90px;resize:vertical}
+.field{display:block;margin-bottom:12px}.field>span{display:block;font-size:.8rem;font-weight:500;color:var(--ink-2);margin-bottom:5px}
+.err{color:var(--danger);min-height:1.2em;font-size:.9rem;margin:4px 0 8px}
+header.top{border-bottom:1px solid var(--line);background:var(--surface)}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+header.top h1{font-size:1.7rem}
+.login{max-width:400px;margin:10vh auto;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:28px 22px}
+.login h1{font-size:2rem;margin-bottom:6px}
+.bar{display:flex;gap:10px;align-items:center;margin:18px 0;flex-wrap:wrap}.bar .input{flex:1;min-width:200px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px;min-width:130px}
+.stat b{display:block;font-family:var(--serif);font-size:1.8rem;line-height:1}
+.list{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));padding-bottom:40px}
+.vcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;cursor:pointer;display:flex;gap:12px}
+.vcard:hover{border-color:var(--gold)}
+.vcard img,.vcard .ph{width:64px;height:64px;border-radius:10px;object-fit:cover;background:var(--surface-2);flex:none}
+.vcard h3{font-size:1.3rem}
+.tag{display:inline-block;font-size:.72rem;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--ink-2);margin:4px 4px 0 0}
+.tag.ok{background:var(--gold-soft);color:var(--ink)}.tag.warn{background:#f6dcd5;color:#7a2a1d}
+.overlay{position:fixed;inset:0;background:rgba(15,12,22,.55);z-index:40;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px 12px}
+.sheet{background:var(--surface);width:100%;max-width:820px;border-radius:20px;padding:22px}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:10px}
+.sheet h2{font-size:1.8rem}
+.x{border:0;background:var(--surface-2);width:36px;height:36px;border-radius:50%;cursor:pointer}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}@media(max-width:640px){.cols{grid-template-columns:1fr}}
+.full{grid-column:1/-1}
+.sec{font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:12px 0 10px}
+.qrbox{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start;background:var(--surface-2);border-radius:14px;padding:16px;margin-bottom:16px}
+.qrbox #qr{background:#fff;padding:10px;border-radius:10px}
+.qrbox .info{flex:1;min-width:220px}
+.code{font-family:ui-monospace,Menlo,monospace;background:var(--surface);padding:3px 8px;border-radius:6px;word-break:break-all}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;z-index:60}
+.piecePrev{width:110px;height:110px;object-fit:cover;border-radius:12px;background:var(--surface-2);display:block;margin-bottom:8px}
+
+/* ---------- printable card (85 x 55 mm business-card size, front + back) ---------- */
+#print{display:none}
+@media print{
+  @page{size:A4;margin:12mm}
+  body{background:#fff}
+  body>*:not(#print){display:none!important}
+  #print{display:block}
+}
+.pcard{width:85mm;height:55mm;border:0.3mm dashed #bbb;display:inline-flex;vertical-align:top;margin:0 6mm 6mm 0;overflow:hidden;font-family:var(--sans);color:#1f1b2e;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pcard.front{background:#1f1b2e;color:#f3eee6;align-items:center;padding:5mm;gap:4mm}
+.pcard.front .pq{background:#fff;padding:2mm;border-radius:2mm;flex:none}
+.pcard.front .pq img,.pcard.front .pq canvas{width:31mm!important;height:31mm!important;display:block}
+.pcard.front .t{font-family:var(--serif);font-size:15pt;line-height:1.1;color:#d4b06a}
+.pcard.front .n{font-size:8.5pt;margin-top:2mm}
+.pcard.front .c{font-size:6.5pt;margin-top:2.5mm;opacity:.75;letter-spacing:.04em;word-break:break-all}
+.pcard.back{background:#f7f3ec;flex-direction:column;justify-content:center;padding:5mm 6mm}
+.pcard.back h4{font-family:var(--serif);font-size:13pt;margin:0 0 1.5mm;color:#a8843f;font-weight:600}
+.pcard.back ol{margin:0;padding-left:4mm;font-size:7.3pt;line-height:1.45}
+.pcard.back .f{margin-top:2.5mm;font-size:6.5pt;color:#5b5568}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="layer"></div>
+<div id="print"></div>
+
+<script>
+const SB_URL = "https://zyxwadchlypfkwkqprdm.supabase.co";
+const SB_KEY = "sb_publishable_mwmgwUsAB7cPI4F1T0AyjA_qOsVfe2A";
+const FN = SB_URL + "/functions/v1/keepsake";
+const APP_URL = new URL("./", location.href).href; // the customer app sits next to this page
+const BRAND = { name: "Infinity Sparkle Studios", email: "info@infinitysstudio.com", phone: "+27 63 698 6806" };
+const sb = window.supabase.createClient(SB_URL, SB_KEY);
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const toast = (m) => { const t = document.createElement("div"); t.className = "toast"; t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); };
+const linkFor = (code) => APP_URL + "?k=" + encodeURIComponent(code);
+let VAULTS = [], Q = "";
+const clientName = (c) => c ? ([c.first_name, c.last_name].filter(Boolean).join(" ") || c.business_name || c.email || c.client_no || "Client") : "";
+
+async function api(action, payload = {}) {
+  const { data: { session } } = await sb.auth.getSession();
+  const res = await fetch(FN, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", apikey: SB_KEY, Authorization: "Bearer " + (session?.access_token || "") },
+    body: JSON.stringify({ action, ...payload }),
+  });
+  let d = {}; try { d = await res.json(); } catch {}
+  if (!res.ok) { const e = new Error(d.error || "Something went wrong"); e.status = res.status; throw e; }
+  return d;
+}
+
+/* ---------- sign in ---------- */
+function renderLogin(msg = "") {
+  $("#app").innerHTML = `<div class="login">
+    <p class="small muted" style="letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:0">${BRAND.name}</p>
+    <h1>Keepsake Studio</h1><p class="muted" style="margin-top:0">Part of Infinity CRM. Create keepsakes, print QR cards and help customers.</p>
+    <form id="lf">
+      <label class="field"><span>Email</span><input class="input" id="em" type="email" value="${BRAND.email}" required autocomplete="username"></label>
+      <label class="field"><span>Password</span><input class="input" id="pw" type="password" required minlength="8" autocomplete="current-password"></label>
+      <div class="err" id="err">${esc(msg)}</div>
+      <button class="btn gold" style="width:100%" id="go">Sign in</button>
+    </form>
+    <p class="small muted" style="margin-top:16px">Use your Infinity CRM login. <a href="#" id="fp">Forgot password?</a></p></div>`;
+  $("#lf").onsubmit = async (e) => {
+    e.preventDefault(); $("#go").disabled = true;
+    const { error } = await sb.auth.signInWithPassword({ email: $("#em").value.trim(), password: $("#pw").value });
+    if (error) { $("#err").textContent = error.message === "Email not confirmed" ? "Please click the confirmation link in your email first." : error.message; $("#go").disabled = false; return; }
+    start();
+  };
+  $("#fp").onclick = async (e) => {
+    e.preventDefault();
+    const { error } = await sb.auth.resetPasswordForEmail($("#em").value.trim(), { redirectTo: location.href.split("#")[0] });
+    $("#err").style.color = error ? "" : "var(--ok)";
+    $("#err").textContent = error ? error.message : "Password reset email sent.";
+  };
+}
+
+function renderNewPassword() {
+  $("#app").innerHTML = `<div class="login"><h1>New password</h1><form id="nf">
+    <label class="field"><span>New password (8+ characters)</span><input class="input" id="pw" type="password" minlength="8" required autocomplete="new-password"></label>
+    <div class="err" id="err"></div><button class="btn gold" style="width:100%">Save password</button></form></div>`;
+  $("#nf").onsubmit = async (e) => {
+    e.preventDefault();
+    const { error } = await sb.auth.updateUser({ password: $("#pw").value });
+    if (error) return ($("#err").textContent = error.message);
+    history.replaceState(null, "", location.pathname); start();
+  };
+}
+
+/* ---------- dashboard ---------- */
+async function start() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return renderLogin();
+  $("#app").innerHTML = `<header class="top"><div class="wrap"><div><h1>Keepsake Studio</h1><div class="small muted">${esc(session.user.email)}</div></div>
+    <div style="display:flex;gap:8px"><a class="btn ghost sm" href="${APP_URL}" target="_blank" rel="noopener">Open customer app</a><button class="btn ghost sm" id="out">Sign out</button></div></div></header>
+    <main class="wrap"><div class="stats" id="stats"></div>
+    <div class="bar"><input class="input" id="q" placeholder="Search names, piece, email, phone…" value="${esc(Q)}"><button class="btn gold" id="new">＋ New keepsake</button></div>
+    <div class="list" id="list"><p class="muted">Loading…</p></div></main>`;
+  $("#out").onclick = async () => { await sb.auth.signOut(); renderLogin(); };
+  $("#new").onclick = () => editVault({});
+  $("#q").oninput = (e) => { Q = e.target.value; drawList(); };
+  await reload();
+}
+async function reload() {
+  try { VAULTS = (await api("admin_list")).vaults; drawList(); }
+  catch (e) {
+    if (e.status === 401 || e.status === 403) { await sb.auth.signOut(); renderLogin(e.message); }
+    else $("#list").innerHTML = `<p class="err">${esc(e.message)}</p>`;
+  }
+}
+function checkTag(v) {
+  if (!v.next_check_date) return "";
+  const days = Math.round((new Date(v.next_check_date + "T00:00:00") - new Date()) / 864e5);
+  if (days < 0) return `<span class="tag warn">Check-up overdue</span>`;
+  if (days <= 30) return `<span class="tag warn">Check-up in ${days}d</span>`;
+  return "";
+}
+function drawList() {
+  const act = VAULTS.filter((v) => v.status === "active");
+  const due = act.filter((v) => v.next_check_date && (new Date(v.next_check_date) - new Date()) / 864e5 <= 30).length;
+  $("#stats").innerHTML = `<div class="stat"><b>${act.length}</b><span class="small muted">Active keepsakes</span></div>
+    <div class="stat"><b>${act.filter((v) => v.pin_set).length}</b><span class="small muted">Activated by customer</span></div>
+    <div class="stat"><b>${VAULTS.reduce((a, v) => a + v.photos, 0)}</b><span class="small muted">Photos saved</span></div>
+    <div class="stat"><b>${due}</b><span class="small muted">Check-ups due (30 days)</span></div>`;
+  const q = Q.toLowerCase();
+  const rows = VAULTS.filter((v) => !q || [v.couple_names, clientName(v.clients), v.clients?.client_no, v.piece_name, v.clients?.email, v.clients?.phone_whatsapp, v.lab_report_no, v.orders?.order_no].some((x) => (x || "").toLowerCase().includes(q)));
+  $("#list").innerHTML = rows.length ? rows.map((v) => `<div class="vcard" data-id="${v.id}">
+      ${v.piece_photo ? `<img src="${esc(v.piece_photo)}" alt="">` : `<div class="ph"></div>`}
+      <div style="min-width:0"><h3>${esc(v.couple_names || clientName(v.clients) || "Unnamed keepsake")}</h3>
+      <div class="small muted">${esc(v.piece_name || "—")}${v.clients ? " · " + esc(clientName(v.clients)) + (v.clients.client_no ? " (" + esc(v.clients.client_no) + ")" : "") : ""}${v.orders ? " · " + esc(v.orders.order_no) : ""}</div>
+      <div>${v.status === "archived" ? `<span class="tag">Archived</span>` : v.pin_set ? `<span class="tag ok">Activated</span>` : `<span class="tag">Waiting for customer</span>`}
+      ${v.kind && v.kind !== "jewellery" ? `<span class="tag ok">${v.kind === "wedding" ? "Wedding" : "Event"}${v.event_date ? " · " + esc(v.event_date) : ""}</span>` : ""}<span class="tag">${v.milestones} memories · ${v.photos} photos</span>${v.share_enabled ? `<span class="tag">Family link on</span>` : ""}${checkTag(v)}</div></div></div>`).join("")
+    : `<p class="muted">${VAULTS.length ? "No matches." : "No keepsakes yet. Click “New keepsake” to create the first one."}</p>`;
+  document.querySelectorAll(".vcard").forEach((el) => el.onclick = () => editVault(VAULTS.find((v) => v.id === el.dataset.id)));
+}
+
+/* ---------- create / edit ---------- */
+function closeLayer() { $("#layer").innerHTML = ""; }
+function editVault(v) {
+  const f = (k, label, type = "text", cls = "") => `<label class="field ${cls}"><span>${label}</span><input class="input" name="${k}" type="${type}" value="${esc(v[k] || "")}"></label>`;
+  $("#layer").innerHTML = `<div class="overlay" id="ov"><div class="sheet">
+    <div class="sheet-head"><h2>${v.id ? esc(v.couple_names || clientName(v.clients) || "Keepsake") : "New keepsake"}</h2><button class="x" onclick="closeLayer()">✕</button></div>
+    ${v.id ? `<div class="qrbox"><div id="qr"></div><div class="info">
+      <div class="small muted">Card link</div><div class="code small">${esc(linkFor(v.code))}</div>
+      <div class="small muted" style="margin-top:8px">Card code: <span class="code">${esc(v.code)}</span></div>
+      ${v.guest_token ? `<div class="small muted" style="margin-top:8px">Guest link: <a href="${esc(APP_URL + "?e=" + v.guest_token)}" target="_blank" rel="noopener" class="code">${esc(APP_URL + "?e=" + v.guest_token)}</a></div>` : ""}
+      <div class="small" style="margin-top:8px">${v.pin_set ? "✅ Customer has set their PIN" : "⏳ Customer hasn't opened it yet"} · ${v.milestones} memories · ${v.photos} photos</div>
+      <div class="acts"><button class="btn gold sm" id="print1">Print QR card</button><button class="btn ghost sm" id="dl">Download QR</button><button class="btn ghost sm" id="cp">Copy link</button>
+      ${v.clients?.phone_whatsapp ? `<a class="btn ghost sm" target="_blank" rel="noopener" href="https://wa.me/${esc(v.clients.phone_whatsapp.replace(/\D/g, "").replace(/^0/, "27"))}?text=${encodeURIComponent(`Hi ${v.couple_names || clientName(v.clients)}! Here is your private Keepsake from ${BRAND.name}, a home for your photos and memories 💍 ${linkFor(v.code)}`)}">WhatsApp link</a>` : ""}</div>
+    </div></div>` : `<p class="muted" style="margin-top:-6px">Fill in what you know. You can edit it any time. After saving you'll get the QR card to print.</p>`}
+    <form id="vf"><div class="cols">
+      <div class="sec full">Customer</div>
+      <label class="field"><span>Kind of keepsake</span><select class="input" name="kind">${[["jewellery", "Jewellery keepsake"], ["wedding", "Wedding app"], ["event", "Other event app"]].map(([k, l]) => `<option value="${k}" ${k === (v.kind || "jewellery") ? "selected" : ""}>${l}</option>`).join("")}</select></label>
+      ${f("event_date", "Event date (wedding / event apps)", "date")}
+      ${f("couple_names", "Names on the keepsake (e.g. Anna & Pieter)", "text", "full")}
+      <input type="hidden" name="client_id" id="cid" value="${esc(v.client_id || "")}">
+      <label class="field"><span>CRM client</span>
+        <div id="cpick">${v.clients ? `<div class="input" style="display:flex;justify-content:space-between;align-items:center"><span>${esc(clientName(v.clients))} <span class="muted small">${esc(v.clients.client_no || "")}</span></span><button type="button" class="btn ghost sm" id="cchg">Change</button></div>` : `<input class="input" id="csearch" placeholder="Search your CRM clients…" autocomplete="off"><div id="cres"></div>`}</div></label>
+      <label class="field"><span>CRM order (optional)</span><select class="input" name="order_id" id="oid"><option value="">No order linked</option>${v.orders ? `<option value="${esc(v.order_id)}" selected>${esc(v.orders.order_no)} · ${esc(v.orders.title || "")}</option>` : ""}</select></label>
+      <div class="sec full">The piece</div>
+      ${f("piece_name", "Piece name (e.g. Infinity Halo Engagement Ring)")}
+      <label class="field"><span>Type</span><select class="input" name="piece_type">${["", "Engagement ring", "Wedding band", "Wedding set", "Pendant", "Earrings", "Bracelet", "Anniversary ring", "Eternity ring", "Other"].map((t) => `<option ${t === (v.piece_type || "") ? "selected" : ""}>${t}</option>`).join("")}</select></label>
+      ${f("metal", "Metal (e.g. 18Kt Yellow Gold)")}${f("stones", "Stones (e.g. 0.75Ct Round Brilliant Diamond, G/VS1)")}
+      ${f("ring_size", "Ring size")}${f("engraving", "Engraving")}
+      ${f("purchase_date", "Date made / bought", "date")}${f("next_check_date", "Next check-up / re-valuation", "date")}
+      <div class="sec full">Certificate</div>
+      ${f("lab_report_no", "ISS Laboratory report no.")}${f("lab_report_url", "Report link (optional)", "url")}
+      <label class="field full"><span>Care notes (leave empty to show the standard care tips)</span><textarea class="input" name="care_notes">${esc(v.care_notes || "")}</textarea></label>
+      ${v.id ? `<div class="full"><div class="sec">Photo of the piece</div>${v.piece_photo ? `<img class="piecePrev" src="${esc(v.piece_photo)}" alt="">` : ""}
+        <input type="file" accept="image/*" id="pp"><span class="small muted" id="ppst"></span></div>` : ""}
+    </div>
+    <div class="err" id="verr"></div>
+    <div class="acts"><button class="btn gold" id="vsave">${v.id ? "Save changes" : "Create keepsake"}</button>
+      ${v.id ? `<button type="button" class="btn ghost" id="rpin">Reset PIN</button><button type="button" class="btn ghost" id="ncode">Lost card: new QR</button>
+      <button type="button" class="btn danger" id="arch">${v.status === "archived" ? "Restore" : "Archive"}</button>` : ""}</div>
+    </form></div></div>`;
+  $("#ov").addEventListener("click", (e) => { if (e.target.id === "ov") closeLayer(); });
+
+  if (v.id) {
+    new QRCode($("#qr"), { text: linkFor(v.code), width: 150, height: 150, correctLevel: QRCode.CorrectLevel.M });
+    $("#cp").onclick = async () => { await navigator.clipboard.writeText(linkFor(v.code)); toast("Link copied"); };
+    $("#dl").onclick = () => {
+      const c = document.createElement("div");
+      new QRCode(c, { text: linkFor(v.code), width: 1024, height: 1024, correctLevel: QRCode.CorrectLevel.M });
+      setTimeout(() => {
+        const cv = c.querySelector("canvas"); const a = document.createElement("a");
+        a.href = cv.toDataURL("image/png"); a.download = `keepsake-${(v.couple_names || v.code).replace(/[^\w]+/g, "-")}.png`; a.click();
+      }, 50);
+    };
+    $("#print1").onclick = () => printCard(v);
+    $("#rpin").onclick = async () => { if (!confirm("Reset the PIN? The customer will choose a new PIN the next time they scan their card. Their photos stay safe.")) return; await api("admin_reset_pin", { id: v.id }); toast("PIN reset"); await reload(); editVault(VAULTS.find((x) => x.id === v.id)); };
+    $("#ncode").onclick = async () => { if (!confirm("Make a new QR code? The old card will stop working, so you'll need to print a new one.")) return; await api("admin_new_code", { id: v.id }); toast("New QR code made"); await reload(); editVault(VAULTS.find((x) => x.id === v.id)); };
+    $("#arch").onclick = async () => { await api("admin_set_status", { id: v.id, status: v.status === "archived" ? "active" : "archived" }); closeLayer(); await reload(); };
+    $("#pp").onchange = async (e) => {
+      const file = e.target.files[0]; if (!file) return;
+      $("#ppst").textContent = " Uploading…";
+      try {
+        const blob = await shrink(file, 1600);
+        const u = await api("admin_piece_upload_url", { id: v.id });
+        const r = await sb.storage.from("keepsake").uploadToSignedUrl(u.path, u.token, blob, { contentType: "image/jpeg" });
+        if (r.error) throw r.error;
+        await api("admin_save_vault", { vault: { ...v, piece_photo_path: u.path } });
+        toast("Photo saved"); await reload(); editVault(VAULTS.find((x) => x.id === v.id));
+      } catch (ex) { $("#ppst").textContent = " " + ex.message; }
+    };
+  }
+  const loadOrders = async (cid, keep) => {
+    const sel = $("#oid"); if (!sel) return;
+    if (!cid) { sel.innerHTML = `<option value="">No order linked</option>`; return; }
+    try {
+      const { orders } = await api("admin_client_orders", { client_id: cid });
+      sel.innerHTML = `<option value="">No order linked</option>` + orders.map((o) => `<option value="${o.id}" ${o.id === keep ? "selected" : ""}>${esc(o.order_no || "")} · ${esc(o.title || o.order_type || "")}</option>`).join("");
+    } catch {}
+  };
+  const wirePicker = () => {
+    const box = $("#csearch"); if (!box) return;
+    let t;
+    const run = async () => {
+      try {
+        const { clients } = await api("admin_clients", { q: box.value });
+        $("#cres").innerHTML = clients.length ? `<div style="border:1px solid var(--line);border-radius:10px;margin-top:6px;max-height:220px;overflow:auto">${clients.map((c) => `<button type="button" data-cl='${esc(JSON.stringify(c))}' style="display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:var(--surface);padding:9px 12px;cursor:pointer">${esc(clientName(c))} <span class="muted small">${esc(c.client_no || "")} ${esc(c.email || c.phone_whatsapp || "")}</span></button>`).join("")}</div>` : `<p class="small muted">No match. Add the client in Infinity CRM first.</p>`;
+        document.querySelectorAll("[data-cl]").forEach((b) => b.onclick = () => {
+          const c = JSON.parse(b.dataset.cl);
+          $("#cid").value = c.id;
+          $("#cpick").innerHTML = `<div class="input" style="display:flex;justify-content:space-between;align-items:center"><span>${esc(clientName(c))} <span class="muted small">${esc(c.client_no || "")}</span></span><button type="button" class="btn ghost sm" id="cchg">Change</button></div>`;
+          wireChange(); loadOrders(c.id);
+          const cn = document.querySelector('[name="couple_names"]'); if (cn && !cn.value) cn.value = clientName(c);
+        });
+      } catch (ex) { $("#cres").innerHTML = `<p class="err">${esc(ex.message)}</p>`; }
+    };
+    box.oninput = () => { clearTimeout(t); t = setTimeout(run, 250); };
+    box.onfocus = run;
+  };
+  const wireChange = () => { const b = $("#cchg"); if (b) b.onclick = () => { $("#cid").value = ""; $("#cpick").innerHTML = `<input class="input" id="csearch" placeholder="Search your CRM clients…" autocomplete="off"><div id="cres"></div>`; loadOrders(""); wirePicker(); $("#csearch").focus(); }; };
+  wirePicker(); wireChange();
+  if (v.client_id) loadOrders(v.client_id, v.order_id);
+  $("#vf").onsubmit = async (e) => {
+    e.preventDefault(); $("#vsave").disabled = true;
+    const data = Object.fromEntries(new FormData(e.target).entries());
+    try {
+      const r = await api("admin_save_vault", { vault: { ...data, id: v.id } });
+      await reload(); toast(v.id ? "Saved" : "Keepsake created");
+      editVault(VAULTS.find((x) => x.id === r.id));
+    } catch (ex) { $("#verr").textContent = ex.message; $("#vsave").disabled = false; }
+  };
+}
+
+function shrink(file, max) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement("canvas"); c.width = img.naturalWidth * s; c.height = img.naturalHeight * s;
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      c.toBlob(res, "image/jpeg", 0.88);
+    };
+    img.onerror = () => rej(new Error("Couldn't read that image"));
+    img.src = url;
+  });
+}
+
+/* ---------- printable card ---------- */
+function printCard(v) {
+  const P = $("#print");
+  P.innerHTML = `<div class="pcard front"><div class="pq" id="pq"></div><div>
+      <div class="t">Our Keepsake</div>
+      <div class="n">${esc(v.couple_names || "Your story, kept forever")}</div>
+      <div class="n" style="opacity:.8">${esc(v.piece_name || "")}</div>
+      <div class="c">Code: ${esc(v.code)}</div></div></div>
+    <div class="pcard back"><h4>Your story, kept forever</h4>
+      <ol><li>Scan the QR code with your phone camera.</li><li>Choose a private PIN.</li>
+      <li>Add your photos and memories: the proposal, wedding, honeymoon, first home, babies…</li>
+      <li>Find your piece's details, certificate and care tips.</li></ol>
+      <div class="f">${BRAND.name} · ${BRAND.email} · ${BRAND.phone}</div></div>`;
+  new QRCode($("#pq"), { text: linkFor(v.code), width: 400, height: 400, correctLevel: QRCode.CorrectLevel.M });
+  setTimeout(() => window.print(), 300);
+}
+
+/* ---------- boot ---------- */
+sb.auth.onAuthStateChange((event) => { if (event === "PASSWORD_RECOVERY") renderNewPassword(); });
+(async () => {
+  if (location.hash.includes("type=recovery")) return; // handled by PASSWORD_RECOVERY
+  start();
+})();
+</script>
+</body>
+</html>
